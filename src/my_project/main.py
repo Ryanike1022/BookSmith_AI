@@ -1,94 +1,54 @@
 #!/usr/bin/env python
+import os
 import sys
+import json
 import warnings
-
 from datetime import datetime
 
 from my_project.crew import MyProject
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
-# This main file is intended to be a way for you to run your
-# crew locally, so refrain from adding unnecessary logic into this file.
-# Replace with inputs you want to test with, it will automatically
-# interpolate any tasks and agents information
 
-def run():
+def run(topic: str = "AI LLMs"):
     """
-    Run the crew.
+    Run the BookSmith AI crew with a given topic.
     """
+    os.makedirs("output", exist_ok=True)
+
     inputs = {
-        'topic': 'AI LLMs',
-        'current_year': str(datetime.now().year)
-    }
-
-    try:
-        MyProject().crew().kickoff(inputs=inputs)
-    except Exception as e:
-        raise Exception(f"An error occurred while running the crew: {e}")
-
-
-def train():
-    """
-    Train the crew for a given number of iterations.
-    """
-    inputs = {
-        "topic": "AI LLMs",
-        'current_year': str(datetime.now().year)
-    }
-    try:
-        MyProject().crew().train(n_iterations=int(sys.argv[1]), filename=sys.argv[2], inputs=inputs)
-
-    except Exception as e:
-        raise Exception(f"An error occurred while training the crew: {e}")
-
-def replay():
-    """
-    Replay the crew execution from a specific task.
-    """
-    try:
-        MyProject().crew().replay(task_id=sys.argv[1])
-
-    except Exception as e:
-        raise Exception(f"An error occurred while replaying the crew: {e}")
-
-def test():
-    """
-    Test the crew execution and returns the results.
-    """
-    inputs = {
-        "topic": "AI LLMs",
+        "topic": topic,
         "current_year": str(datetime.now().year)
     }
 
     try:
-        MyProject().crew().test(n_iterations=int(sys.argv[1]), eval_llm=sys.argv[2], inputs=inputs)
-
+        MyProject().crew().kickoff(inputs=inputs)
+        print("\n✅ BookSmith AI finished!")
+        print("📄 Saved: output/book_final.md")
     except Exception as e:
-        raise Exception(f"An error occurred while testing the crew: {e}")
+        raise Exception(f"Error while running crew: {e}")
 
-def run_with_trigger():
+
+def run_with_trigger(trigger_payload: dict):
     """
-    Run the crew with trigger payload.
+    Run the crew with trigger payload (useful for FastAPI later).
     """
-    import json
-
-    if len(sys.argv) < 2:
-        raise Exception("No trigger payload provided. Please provide JSON payload as argument.")
-
-    try:
-        trigger_payload = json.loads(sys.argv[1])
-    except json.JSONDecodeError:
-        raise Exception("Invalid JSON payload provided as argument")
+    os.makedirs("output", exist_ok=True)
 
     inputs = {
         "crewai_trigger_payload": trigger_payload,
-        "topic": "",
-        "current_year": ""
+        "topic": trigger_payload.get("topic", ""),
+        "current_year": str(datetime.now().year)
     }
 
     try:
-        result = MyProject().crew().kickoff(inputs=inputs)
-        return result
+        return MyProject().crew().kickoff(inputs=inputs)
     except Exception as e:
-        raise Exception(f"An error occurred while running the crew with trigger: {e}")
+        raise Exception(f"Error while running crew with trigger: {e}")
+
+
+if __name__ == "__main__":
+    # CLI Usage:
+    # python -m my_project.main "Your Topic"
+    topic = sys.argv[1] if len(sys.argv) > 1 else "AI LLMs"
+    run(topic)

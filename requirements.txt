@@ -1,15 +1,29 @@
-# Core
-crewai>=0.80.0
-python-dotenv>=1.0.1
+# =========================
+# Already installed
+# =========================
+# crewai
+# google-genai
 
-# Gemini API
-google-generativeai>=0.8.3
+# =========================
+# Needed for FastAPI backend
+# =========================
+fastapi
+uvicorn[standard]
+pydantic
 
-# Utilities
-pydantic>=2.7.0
-pyyaml>=6.0.2
-rich>=13.7.1
-tenacity>=8.2.3
+# =========================
+# Useful/required for env + HTTP calls
+# =========================
+python-dotenv
+requests
 
-# Optional (good for debugging)
-tqdm>=4.66.4
+# =========================
+# Serper / tools
+# =========================
+crewai-tools
+
+# =========================
+# Markdown + PDF export
+# =========================
+markdown
+weasyprint

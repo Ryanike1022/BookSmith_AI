@@ -3,64 +3,71 @@ from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from crewai_tools import SerperDevTool
 from typing import List
-# If you want to run a snippet of code before or after the crew starts,
-# you can use the @before_kickoff and @after_kickoff decorators
-# https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
+
 
 @CrewBase
 class MyProject():
-    """MyProject crew"""
+    """BookSmith AI Blueprint Generator crew"""
 
     agents: List[BaseAgent]
     tasks: List[Task]
 
-    # Learn more about YAML configuration files here:
-    # Agents: https://docs.crewai.com/concepts/agents#yaml-configuration-recommended
-    # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
-    
-    # If you would like to add tools to your agents, you can learn more about it here:
-    # https://docs.crewai.com/concepts/agents#agent-tools
-    @agent
-    def researcher(self) -> Agent:
-        return Agent(
-            config=self.agents_config['researcher'], # type: ignore[index]
-            verbose=True,
-            tools = [SerperDevTool()]
-        )
+    # -------------------
+    # AGENTS (3)
+    # -------------------
 
     @agent
-    def reporting_analyst(self) -> Agent:
+    def outline_architect(self) -> Agent:
         return Agent(
-            config=self.agents_config['reporting_analyst'], # type: ignore[index]
+            config=self.agents_config["outline_architect"],
             verbose=True
         )
 
-    # To learn more about structured task outputs,
-    # task dependencies, and task callbacks, check out the documentation:
-    # https://docs.crewai.com/concepts/tasks#overview-of-a-task
-    @task
-    def research_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['research_task'], # type: ignore[index]
+    @agent
+    def researcher(self) -> Agent:
+        return Agent(
+            config=self.agents_config["researcher"],
+            verbose=True,
+            tools=[SerperDevTool()]  # Serper only for researcher
         )
 
-    @task
-    def reporting_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['reporting_task'], # type: ignore[index]
-            output_file='report.md'
+    @agent
+    def final_compiler(self) -> Agent:
+        return Agent(
+            config=self.agents_config["final_compiler"],
+            verbose=True
         )
+
+    # -------------------
+    # TASKS (3)
+    # -------------------
+
+    @task
+    def outline_task(self) -> Task:
+        return Task(config=self.tasks_config["outline_task"])
+
+    @task
+    def research_task(self) -> Task:
+        return Task(config=self.tasks_config["research_task"])
+
+    @task
+    def compile_book_task(self) -> Task:
+        return Task(
+            config=self.tasks_config["compile_book_task"],
+            output_file="output/book_final.md"
+        )
+
+    # -------------------
+    # CREW
+    # -------------------
 
     @crew
     def crew(self) -> Crew:
-        """Creates the MyProject crew"""
-        # To learn how to add knowledge sources to your crew, check out the documentation:
-        # https://docs.crewai.com/concepts/knowledge#what-is-knowledge
-
+        """Creates the BookSmith AI crew"""
         return Crew(
-            agents=self.agents, # Automatically created by the @agent decorator
-            tasks=self.tasks, # Automatically created by the @task decorator
+            agents=self.agents,
+            tasks=self.tasks,
             process=Process.sequential,
             verbose=True,
-            # process=Process.hierarchical, # In case you wanna use that instead https://docs.crewai.com/how-to/Hierarchical/
+            max_rpm=4 
         )
