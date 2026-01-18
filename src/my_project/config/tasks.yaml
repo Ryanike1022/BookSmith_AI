@@ -14,9 +14,15 @@ outline_task:
     - Key points (max 5 bullets)
     - Practical exercise (1 bullet)
     Keep everything compact and clear.
+
+    MANDATORY TOOL USAGE:
+    1) First call init_book_structure().
+    2) Collect the 6 chapter titles as a Python list[str] in the same order as the Table of Contents.
+    3) Then call set_book_outline(title, chapters) to save outline.json.
   expected_output: >
     A structured outline in markdown (no code fences).
   agent: outline_architect
+
 
 
 research_task:
@@ -58,6 +64,17 @@ compile_book_task:
        List all sources from research as clickable links.
 
     Keep the entire manuscript clean and professional.
+
+    MANDATORY TOOL USAGE:
+    For each chapter 1..6:
+    1) Call create_chapter(no, title)
+    2) Prepare the chapter blueprint markdown for that chapter ONLY
+    3) Call append_to_chapter(no, content) to save it
+    Notes:
+    - no must be 1..6
+    - title should match the Table of Contents
+    - content should be markdown text only (no code fences)
   expected_output: >
     A complete mini-book blueprint manuscript in markdown (no code fences).
   agent: final_compiler
+

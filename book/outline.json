@@ -1,0 +1,29 @@
+{
+  "title": "The LLM Blueprint: Building, Understanding, and Mastering Large Language Models",
+  "chapters": [
+    {
+      "no": 1,
+      "title": "The Dawn of Intelligent Text: Understanding LLM Fundamentals"
+    },
+    {
+      "no": 2,
+      "title": "Building Blocks: Pre-trained Models and Basic Prompting"
+    },
+    {
+      "no": 3,
+      "title": "Fine-Tuning and Adaptation: Tailoring LLMs to Your Needs"
+    },
+    {
+      "no": 4,
+      "title": "Beyond the Basics: Advanced LLM Architectures and Techniques"
+    },
+    {
+      "no": 5,
+      "title": "Deployment and Production: Bringing LLMs to Life"
+    },
+    {
+      "no": 6,
+      "title": "The Future of LLMs: Innovation, Ethics, and Impact"
+    }
+  ]
+}

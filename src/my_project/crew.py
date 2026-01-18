@@ -4,6 +4,14 @@ from crewai.agents.agent_builder.base_agent import BaseAgent
 from crewai_tools import SerperDevTool
 from typing import List
 
+from my_project.tools.crewai_tools import (
+    init_book_structure_tool,
+    set_book_outline_tool,
+    create_chapter_tool,
+    append_to_chapter_tool,
+)
+
+
 
 @CrewBase
 class MyProject():
@@ -20,7 +28,8 @@ class MyProject():
     def outline_architect(self) -> Agent:
         return Agent(
             config=self.agents_config["outline_architect"],
-            verbose=True
+            verbose=True,
+            tools=[init_book_structure_tool, set_book_outline_tool],
         )
 
     @agent
@@ -35,7 +44,9 @@ class MyProject():
     def final_compiler(self) -> Agent:
         return Agent(
             config=self.agents_config["final_compiler"],
-            verbose=True
+            verbose=True,
+            tools=[create_chapter_tool, append_to_chapter_tool],
+            
         )
 
     # -------------------
