@@ -1,0 +1,47 @@
+# Dockerfile.backend
+FROM python:3.11-slim
+
+# Prevent Python from buffering logs
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Install OS deps needed by some python libs
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    libcairo2 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libgdk-pixbuf-2.0-0 \
+    libffi-dev \
+    shared-mime-info \
+    fonts-dejavu-core \
+    libglib2.0-0 \
+    libgobject-2.0-0 \
+ && rm -rf /var/lib/apt/lists/*
+
+
+# Install uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# uv is installed in ~/.local/bin
+ENV PATH="/root/.local/bin:${PATH}"
+
+WORKDIR /app
+
+# Copy python project metadata first (better caching)
+COPY pyproject.toml uv.lock ./
+
+# Create venv + install deps
+RUN uv sync --frozen
+
+# Copy the rest of the backend code
+COPY src ./src
+COPY book ./book
+#COPY output ./output
+COPY mcp_backend ./mcp_backend
+
+# Expose FastAPI port
+EXPOSE 8000
+
+# Run FastAPI
+CMD ["uv", "run", "uvicorn", "src.my_project.api:app", "--host", "0.0.0.0", "--port", "8000"]
