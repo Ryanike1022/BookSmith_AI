@@ -1,29 +1,29 @@
 {
-  "title": "The LLM Blueprint: Building, Understanding, and Mastering Large Language Models",
+  "title": "Discipline Blueprint",
   "chapters": [
     {
       "no": 1,
-      "title": "The Dawn of Intelligent Text: Understanding LLM Fundamentals"
+      "title": "Why Discipline Matters"
     },
     {
       "no": 2,
-      "title": "Building Blocks: Pre-trained Models and Basic Prompting"
+      "title": "Mindset Reset"
     },
     {
       "no": 3,
-      "title": "Fine-Tuning and Adaptation: Tailoring LLMs to Your Needs"
+      "title": "Habit Building"
     },
     {
       "no": 4,
-      "title": "Beyond the Basics: Advanced LLM Architectures and Techniques"
+      "title": "Time Management"
     },
     {
       "no": 5,
-      "title": "Deployment and Production: Bringing LLMs to Life"
+      "title": "Dealing With Laziness"
     },
     {
       "no": 6,
-      "title": "The Future of LLMs: Innovation, Ethics, and Impact"
+      "title": "Long-term Consistency"
     }
   ]
 }

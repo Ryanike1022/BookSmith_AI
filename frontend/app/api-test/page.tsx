@@ -6,7 +6,14 @@ export default function ApiTestPage() {
   const [status, setStatus] = useState("Loading...");
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/docs")
+    const base = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+    if (!base) {
+      setStatus("❌ NEXT_PUBLIC_API_BASE_URL is not set");
+      return;
+    }
+
+    fetch(`${base}/docs`)
       .then((r) => {
         if (!r.ok) throw new Error("Backend not reachable");
         return r.text();
