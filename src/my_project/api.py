@@ -20,7 +20,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://127.0.0.1:3000",
-        "https://*.vercel.app",  # optional wildcard support
+        "https://book-smith-ai.vercel.app", #vercel deployment
     ],
     allow_credentials=True,
     allow_methods=["*"],
