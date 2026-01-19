@@ -1,8 +1,10 @@
-from crewai import Agent, Crew, Process, Task
+import os
+from typing import List
+
+from crewai import Agent, Crew, Process, Task, LLM
 from crewai.project import CrewBase, agent, crew, task
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from crewai_tools import SerperDevTool
-from typing import List
 
 from my_project.tools.crewai_tools import (
     init_book_structure_tool,
@@ -11,7 +13,11 @@ from my_project.tools.crewai_tools import (
     append_to_chapter_tool,
 )
 
-
+# Force Gemini as the LLM
+llm = LLM(
+    model="gemini/gemini-1.5-flash",
+    api_key=os.getenv("GEMINI_API_KEY")
+)
 
 @CrewBase
 class MyProject():
@@ -30,6 +36,7 @@ class MyProject():
             config=self.agents_config["outline_architect"],
             verbose=True,
             tools=[init_book_structure_tool, set_book_outline_tool],
+            llm=llm
         )
 
     @agent
@@ -37,7 +44,8 @@ class MyProject():
         return Agent(
             config=self.agents_config["researcher"],
             verbose=True,
-            tools=[SerperDevTool()]  # Serper only for researcher
+            tools=[SerperDevTool()],
+            llm=llm
         )
 
     @agent
@@ -46,7 +54,7 @@ class MyProject():
             config=self.agents_config["final_compiler"],
             verbose=True,
             tools=[create_chapter_tool, append_to_chapter_tool],
-            
+            llm=llm
         )
 
     # -------------------
@@ -80,5 +88,5 @@ class MyProject():
             tasks=self.tasks,
             process=Process.sequential,
             verbose=True,
-            max_rpm=4 
+            max_rpm=4
         )
