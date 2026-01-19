@@ -1,4 +1,4 @@
-from fastapi import FastAPI, BackgroundTasks, HTTPException
+from fastapi import FastAPI, BackgroundTasks, HTTPException, Request
 from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 from uuid import uuid4
@@ -6,7 +6,6 @@ from datetime import datetime
 from fastapi.middleware.cors import CORSMiddleware
 
 import os
-
 import markdown
 from weasyprint import HTML
 
@@ -15,11 +14,13 @@ from my_project.crew import MyProject
 
 app = FastAPI(title="BookSmith AI API", version="1.0.0")
 
+# ✅ CORS: allow frontend domains (localhost + vercel)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "https://*.vercel.app",  # optional wildcard support
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -60,7 +61,7 @@ def run_generation(job_id: str, request: GenerateRequest):
 
         inputs = {
             "topic": final_topic,
-            "current_year": str(datetime.now().year)
+            "current_year": str(datetime.now().year),
         }
 
         # Run crew
@@ -88,11 +89,12 @@ def run_generation(job_id: str, request: GenerateRequest):
 
 
 # -------------------
-# ROUTES (top-level)
+# ROUTES
 # -------------------
 
-@app.get("/")
-def root():
+# ✅ Render healthcheck uses HEAD /
+@app.api_route("/", methods=["GET", "HEAD"])
+async def root(request: Request):
     return {"message": "Welcome to the BookSmith AI API!"}
 
 
@@ -103,7 +105,7 @@ def generate_book(request: GenerateRequest, background_tasks: BackgroundTasks):
     JOBS[job_id] = {
         "status": "queued",
         "requested_at": datetime.now().isoformat(),
-        "request": request.model_dump()
+        "request": request.model_dump(),
     }
 
     background_tasks.add_task(run_generation, job_id, request)
@@ -111,7 +113,7 @@ def generate_book(request: GenerateRequest, background_tasks: BackgroundTasks):
     return {
         "job_id": job_id,
         "status": "queued",
-        "message": "Book generation started."
+        "message": "Book generation started.",
     }
 
 
@@ -132,7 +134,7 @@ def get_result(job_id: str):
     if job["status"] != "completed":
         raise HTTPException(
             status_code=400,
-            detail=f"Job not completed yet. Current status: {job['status']}"
+            detail=f"Job not completed yet. Current status: {job['status']}",
         )
 
     path = job.get("output_file")
@@ -144,8 +146,9 @@ def get_result(job_id: str):
 
     return {
         "job_id": job_id,
-        "content": md
+        "content": md,
     }
+
 
 @app.get("/download/pdf/{job_id}")
 def download_pdf(job_id: str):
@@ -207,6 +210,5 @@ def download_pdf(job_id: str):
     return FileResponse(
         pdf_path,
         media_type="application/pdf",
-        filename=f"{job_id}_BookSmithAI.pdf"
+        filename=f"{job_id}_BookSmithAI.pdf",
     )
-
