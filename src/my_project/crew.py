@@ -15,7 +15,7 @@ from my_project.tools.crewai_tools import (
 
 # Force Gemini as the LLM
 llm = LLM(
-    model="gemini/gemini-1.5-flash",
+    model="gemini/gemini-2.5-flash",
     api_key=os.getenv("GEMINI_API_KEY")
 )
 
